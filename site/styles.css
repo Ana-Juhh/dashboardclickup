@@ -1,0 +1,407 @@
+:root{
+  --bg: #0b1220;
+  --panel: rgba(255,255,255,0.06);
+  --panel2: rgba(255,255,255,0.08);
+  --text: rgba(255,255,255,0.92);
+  --muted: rgba(255,255,255,0.65);
+  --border: rgba(255,255,255,0.10);
+  --shadow: 0 10px 30px rgba(0,0,0,0.35);
+  --radius: 16px;
+}
+
+*{ box-sizing: border-box; }
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue";
+  background: radial-gradient(1200px 800px at 10% 10%, rgba(110,231,183,0.12), transparent 60%),
+              radial-gradient(1200px 800px at 90% 0%, rgba(59,130,246,0.12), transparent 55%),
+              var(--bg);
+  color: var(--text);
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top:0;
+  backdrop-filter: blur(10px);
+  background: rgba(11,18,32,0.65);
+  z-index: 10;
+}
+
+h1{ margin:0; font-size: 20px; }
+h2{ margin: 0 0 12px 0; font-size: 16px; }
+h3{ margin:0; font-size: 14px; }
+
+.muted{ color: var(--muted); margin: 4px 0 0 0; }
+.error{ color: #fecaca; }
+
+.btn{
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+.btn:hover{ background: rgba(255,255,255,0.10); }
+.btn--primary{
+  background: rgba(59,130,246,0.22);
+  border-color: rgba(59,130,246,0.35);
+}
+.btn--primary:hover{ background: rgba(59,130,246,0.30); }
+
+.grid{
+  padding: 18px 20px;
+  display:grid;
+  grid-template-columns: 360px 1fr;
+  gap: 16px;
+}
+
+.panel{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.stat{
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+}
+.stat__num{ font-size: 22px; font-weight: 700; }
+.stat__label{ color: var(--muted); margin-top: 4px; font-size: 12px; }
+
+.sectionHeader{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap: 10px;
+  margin: 14px 0 10px 0;
+}
+
+.pill{
+  font-size: 12px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+}
+
+.kanban{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.col{
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow:hidden;
+  background: rgba(255,255,255,0.04);
+}
+
+.col__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 12px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.col__header--todo{
+  background: rgba(47, 228, 11, 0.1);
+}
+.col__header--progress{
+  background: rgba(8, 74, 182, 0.12);
+}
+
+.badge{
+  display:inline-flex;
+  min-width: 28px;
+  justify-content:center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.scrollBox{
+  height: 70vh;
+  overflow: auto;
+  padding: 12px;
+  scrollbar-width: thin;
+}
+.stack{ display:flex; flex-direction: column; gap: 10px; }
+
+.card{
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  padding: 12px;
+}
+.card__title{ font-weight: 700; margin: 0 0 8px 0; }
+.card__meta{ display:flex; flex-wrap:wrap; gap: 8px; color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+.tag{
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.05);
+}
+.list{ margin: 0; padding-left: 16px; color: var(--text); }
+.list li{ margin: 4px 0; color: rgba(255,255,255,0.85); }
+
+.footerNote{ margin-top: 12px; font-size: 12px; }
+
+@media (max-width: 980px){
+  .grid{ grid-template-columns: 1fr; }
+  .scrollBox{ height: 44vh; }
+  .kanban{ grid-template-columns: 1fr; }
+}
+
+/* ===== TEMA baseado no "outro dashboard" (cole no FINAL) ===== */
+
+:root{
+  --accent-yellow:#ffc107;
+  --accent-yellow-2:#ff9800;
+  --accent-blue:#2196f3;
+  --accent-blue-2:#1e88e5;
+
+  --foreground-header: rgba(255,255,255,0.92);
+  --background-footer: rgba(6, 20, 38, 0.90);
+}
+
+/* fundo e topbar */
+body{
+  background: radial-gradient(1200px 800px at 10% 10%, rgba(255,193,7,0.10), transparent 60%),
+              radial-gradient(1200px 800px at 90% 0%, rgba(33,150,243,0.12), transparent 55%),
+              var(--bg);
+}
+
+.topbar{
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  background: rgba(11,18,32,0.70);
+}
+
+/* ===== LAYOUT: seu .grid vira container + aside + main ===== */
+.grid{
+  grid-template-columns: 360px 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* seus .panel viram os "blocos" do tema antigo */
+.panel{
+  padding: 25px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(13, 39, 71, 0.95), rgba(6, 20, 38, 0.98));
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* título como no antigo */
+.panel h2, .panel h1, .title{
+  color: var(--foreground-header);
+}
+
+.title {
+    color: var(--foreground-header);
+    border-bottom: solid 3px var(--accent-yellow);
+    padding-bottom: 12px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* ===== CONTADORES ===== */
+/* seu .stats + .stat vira o estilo statCard */
+.stats{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat{
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 152, 0, 0.10));
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  border: 1px solid rgba(255, 193, 7, 0.30);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.25);
+}
+
+.stat__num{
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--accent-yellow);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat__label{
+  font-size: 0.75rem;
+  color: var(--foreground-header);
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== PILLS ===== */
+.pill{
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.85);
+}
+
+/* ===== KANBAN ===== */
+.kanban{
+  gap: 20px;
+}
+
+.col{
+  border-radius: 12px;
+  background: rgba(6, 20, 38, 0.60);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* header das colunas com gradiente colorido */
+.col__header{
+  padding: 15px 20px;
+  border-bottom: none;
+  font-weight: 700;
+}
+
+.col__header--todo{
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.90), rgba(255, 152, 0, 0.80));
+  color: rgba(11,18,32,0.95);
+}
+
+.col__header--progress{
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.90), rgba(30, 136, 229, 0.80));
+  color: white;
+}
+
+.badge{
+  background: rgba(0, 0, 0, 0.30);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  border: none;
+}
+
+/* ===== LISTA / SCROLL ===== */
+.scrollBox{
+  padding: 15px;
+}
+
+.scrollBox::-webkit-scrollbar { width: 6px; }
+.scrollBox::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.20);
+  border-radius: 10px;
+}
+.scrollBox::-webkit-scrollbar-thumb {
+  background: rgba(255, 193, 7, 0.50);
+  border-radius: 10px;
+}
+.scrollBox::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 193, 7, 0.70);
+}
+
+/* ===== CARDS ===== */
+.card{
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.30);
+  transition: all 0.25s ease;
+}
+
+.card:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.40);
+  border-color: rgba(255,193,7,0.55);
+}
+
+.card__title{
+  color: var(--foreground-header);
+  font-weight: 700;
+}
+
+.card__meta{
+  color: rgba(255,255,255,0.75);
+}
+
+.tag{
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.88);
+}
+
+/* itens */
+.bold{
+  font-weight: 800;
+  color: var(--accent-yellow);
+}
+.list li{
+  color: rgba(255,255,255,0.90);
+}
+
+/* responsivo */
+@media (max-width: 980px){
+  .grid{ grid-template-columns: 1fr; }
+  .kanban{ grid-template-columns: 1fr; }
+}
+
+
+/* ===== MAIS ESPAÇO ENTRE TAREFAS (igual ao print) ===== */
+.scrollBox{
+  padding: 18px;
+}
+
+.stack{
+  gap: 16px;           /* era 10px */
+}
+
+.card{
+  border-radius: 14px;
+  padding: 14px;
+}
+
+/* Dá “respiro” no conteúdo dentro do card */
+.card__meta{
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.list li{ margin: 6px 0; }
+
+/* Opcional: separador leve dentro do card (se você usa <hr>) */
+.card hr{
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  margin: 10px 0;
+}

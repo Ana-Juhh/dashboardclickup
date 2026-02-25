@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard - Diário de Bordo</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <section class="grid">
+    <aside class="panel">
+      <h2 class="title">Status das Tarefas</h2>
+
+      <div class="stats">
+  <div class="stat">
+    <div class="stat__num" id="todoCount">0</div>
+    <div class="stat__label">A FAZER</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat__num" id="progressCount">0</div>
+    <div class="stat__label">EM ANDAMENTO</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat__num" id="totalCount">0</div>
+    <div class="stat__label">TOTAL</div>
+  </div>
+</div>
+
+      <div class="sectionHeader">
+        <h2>Diário de Bordo</h2>
+      </div>
+
+      <div class="scrollBox" id="diaryScroll">
+        <div id="diaryList" class="stack"></div>
+      </div>
+    </aside>
+
+    <main class="panel">
+      <div class="sectionHeader">
+        <h2>Tarefas</h2>
+        <span class="muted" id="lastUpdate">—</span>
+      </div>
+
+      <div class="kanban">
+        <section class="col">
+          <header class="col__header col__header--todo">
+            <h3>A Fazer</h3>
+            <span class="badge" id="badgeTodo">—</span>
+          </header>
+          <div class="scrollBox" id="todoScroll">
+            <div id="todoList" class="stack"></div>
+          </div>
+        </section>
+
+        <section class="col">
+          <header class="col__header col__header--progress">
+            <h3>Em Andamento</h3>
+            <span class="badge" id="badgeProgress">—</span>
+          </header>
+          <div class="scrollBox" id="progressScroll">
+            <div id="progressList" class="stack"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="footerNote muted">
+
+        <p id="err" class="error" style="display:none;"></p>
+      </div>
+    </main>
+  </section>
+
+  <script src="./script.js"></script>
+</body>
+</html>
