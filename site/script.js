@@ -11,7 +11,7 @@
 console.log("✅ script.js carregou (sem token)");
 
 // ✅ Troque pela URL do seu serviço no Render (sem barra no final)
-const API_BASE = "https://SEU-SERVICO.onrender.com";
+const API_BASE = "https://dashboardclickup-jspu.onrender.com";
 
 // Atualização automática
 const REFRESH_MS = 2 * 60 * 1000;

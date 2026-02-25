@@ -2,14 +2,12 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
-
-// Se o front ficar em outro domínio (Netlify), deixe CORS ligado.
-// Se você hospedar front + back juntos no Render, dá pra desligar depois.
 app.use(cors());
 
-const CLICKUP_TOKEN = process.env.pk_230559606_CWDVS29Q09ZATSSUGJ88CCP012O3QI73;
+// ✅ CORRETO: pega do Render pela chave CLICKUP_TOKEN
+const CLICKUP_TOKEN = process.env.CLICKUP_TOKEN;
 
-// Seus LIST IDs
+// Seus LIST IDs (dos seus links)
 const TASKS_LIST_ID = "901105559393";
 const DIARY_LIST_ID = "901113131670";
 
@@ -43,14 +41,12 @@ async function clickup(url) {
 }
 
 // Healthcheck
-app.get("/", (_req, res) => {
-  res.json({ ok: true });
-});
+app.get("/", (_req, res) => res.json({ ok: true }));
 
-// Tarefas (já filtradas por status no servidor)
+// Tarefas
 app.get("/api/tasks", async (_req, res) => {
   try {
-    const url = `https://api.clickup.com/api/v2/list/${901105559393}/task?include_closed=false&subtasks=true&page=0&limit=100`;
+    const url = `https://api.clickup.com/api/v2/list/${TASKS_LIST_ID}/task?include_closed=false&subtasks=true&page=0&limit=100`;
     const data = await clickup(url);
 
     const tasks = Array.isArray(data.tasks) ? data.tasks : [];
@@ -65,10 +61,10 @@ app.get("/api/tasks", async (_req, res) => {
   }
 });
 
-// Diário (sem filtrar por data aqui; você pode filtrar no front como já faz)
+// Diário
 app.get("/api/diary", async (_req, res) => {
   try {
-    const url = `https://api.clickup.com/api/v2/list/${901113131670}/task?include_closed=false&subtasks=true&page=0&limit=100`;
+    const url = `https://api.clickup.com/api/v2/list/${DIARY_LIST_ID}/task?include_closed=false&subtasks=true&page=0&limit=100`;
     const data = await clickup(url);
 
     const tasks = Array.isArray(data.tasks) ? data.tasks : [];
