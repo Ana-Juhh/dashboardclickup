@@ -407,33 +407,8 @@ body{
 }
 
 @media (min-width: 1600px){
-
-  body {
-    font-size: 20px;
-  }
-
-  .taskTitle {
-    font-size: 1.8rem;
-  }
-
-  .taskBody {
-    font-size: 1.2rem;
-  }
-
-  .col__header {
-    font-size: 1.8rem;
-  }
-
-  .badge {
-    font-size: 1.3rem;
-    padding: 8px 16px;
-  }
-
-  .scrollBox {
-    height: 90vh;
-  }
-
-  .stat__num {
-    font-size: 3rem;
-  }
+  body { font-size: 17px; }
+  .taskTitle { font-size: 1.35rem; }
+  .col__header { font-size: 1.45rem; }
+  .scrollBox { height: 88vh; }
 }

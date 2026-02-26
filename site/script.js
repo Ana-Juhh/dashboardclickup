@@ -103,7 +103,6 @@ function sortByPriorityAsc(a, b) {
 //////////////////////////////
 
 function setCounts({ todo, inprogress, total }) {
-  // IDs (preferencial)
   const todoEl = $("todoCount");
   const progEl = $("progressCount");
   const totalEl = $("totalCount");
@@ -112,9 +111,9 @@ function setCounts({ todo, inprogress, total }) {
   if (progEl) progEl.textContent = String(inprogress);
   if (totalEl) totalEl.textContent = String(total);
 
-  // Badge das colunas (opcional)
-  const todoBadge = document.querySelector(".col__header--todo .badge");
-  const progBadge = document.querySelector(".col__header--progress .badge");
+  // Badges
+  const todoBadge = $("badgeTodo");
+  const progBadge = $("badgeProgress");
 
   if (todoBadge) todoBadge.textContent = String(todo);
   if (progBadge) progBadge.textContent = String(inprogress);
@@ -191,10 +190,10 @@ function renderDiaryCard(task) {
 //////////////////////////////
 
 function startAutoScrollTV({
-  selectors = [".scrollBox"],
-  speed = 0.35,
-  pauseMsAtEnd = 1800,
-  pauseMsAtTop = 800
+  selectors = [],
+  speed = 0.65,        // ✅ mais rápido (0.55~0.90 bom pra TV)
+  pauseMsAtEnd = 2200,
+  pauseMsAtTop = 900
 } = {}) {
   const boxes = selectors.flatMap(sel => Array.from(document.querySelectorAll(sel)));
 
@@ -243,7 +242,6 @@ function startAutoScrollTV({
 
     requestAnimationFrame(step);
 
-    // Pausa ao passar mouse (se alguém mexer)
     box.addEventListener("mouseenter", () => { running = false; });
     box.addEventListener("mouseleave", () => {
       if (!running) {
@@ -253,7 +251,6 @@ function startAutoScrollTV({
       }
     });
 
-    // se rolar manualmente, pausa um pouco
     box.addEventListener("scroll", () => {
       pausedUntil = performance.now() + 600;
     }, { passive: true });
@@ -277,7 +274,7 @@ async function loadDashboard() {
   if (progressList) progressList.innerHTML = `<p class="muted">Carregando...</p>`;
   if (diaryList) diaryList.innerHTML = `<p class="muted">Carregando...</p>`;
 
-  if (!API_BASE || API_BASE.includes("SEU-SERVICO")) {
+  if (!API_BASE) {
     throw new Error("Configure API_BASE com a URL do seu serviço no Render.");
   }
 
@@ -289,7 +286,6 @@ async function loadDashboard() {
   const tasks = Array.isArray(tasksData.tasks) ? tasksData.tasks : [];
   const diaryTasks = Array.isArray(diaryData.tasks) ? diaryData.tasks : [];
 
-  // Separar colunas por status
   const todo = tasks.filter(t => t?.status?.id === TODO_STATUS_ID);
   const inprogress = tasks.filter(t => t?.status?.id === INPROGRESS_STATUS_ID);
 
@@ -301,7 +297,6 @@ async function loadDashboard() {
   if (progressList) progressList.innerHTML =
     inprogress.sort(sortByPriorityAsc).map(renderTaskCard).join("") || `<p class="muted">Sem tarefas.</p>`;
 
-  // Diário: hoje ou ontem no nome
   const today = todayString();
   const yesterday = yesterdayString();
 
@@ -313,14 +308,17 @@ async function loadDashboard() {
   if (diaryList) diaryList.innerHTML =
     filteredDiary.map(renderDiaryCard).join("") || `<p class="muted">Nenhum diário encontrado pra ${today} ou ${yesterday}.</p>`;
 
-  // Reset scroll ao atualizar
-  document.querySelectorAll(".scrollBox").forEach(el => (el.scrollTop = 0));
+  // ✅ Reset scroll nos containers certos (os que realmente rolam)
+  ["#diaryScroll", "#todoScroll", "#progressScroll"].forEach(sel => {
+    const el = document.querySelector(sel);
+    if (el) el.scrollTop = 0;
+  });
 
-  // Inicia TV mode (tarefas + diário)
+  // ✅ Auto-scroll nos containers certos (diário + colunas)
   startAutoScrollTV({
-    selectors: [".scrollBox"],
-    speed: 0.30,
-    pauseMsAtEnd: 2200,
+    selectors: ["#diaryScroll", "#todoScroll", "#progressScroll"],
+    speed: 0.65,
+    pauseMsAtEnd: 2400,
     pauseMsAtTop: 900
   });
 }
@@ -329,10 +327,10 @@ function showFatalError(err) {
   console.error(err);
   const msg = escapeHtml(err?.message || String(err));
 
-  const errorBox = $("errorBox");
-  if (errorBox) {
-    errorBox.innerHTML = `<div class="errorBox">Erro:<pre>${msg}</pre></div>`;
-    errorBox.style.display = "block";
+  const errEl = $("err");
+  if (errEl) {
+    errEl.textContent = `Erro: ${msg}`;
+    errEl.style.display = "block";
     return;
   }
 
