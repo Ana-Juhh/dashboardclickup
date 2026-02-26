@@ -142,9 +142,9 @@ h3{ margin:0; font-size: 14px; }
 }
 
 .scrollBox{
-  height: 70vh;
+  height: 82h;
   overflow: auto;
-  padding: 12px;
+  padding: 18px;
   scrollbar-width: thin;
 }
 .stack{ display:flex; flex-direction: column; gap: 10px; }
@@ -404,4 +404,22 @@ body{
   border: none;
   border-top: 1px solid rgba(255,255,255,0.10);
   margin: 10px 0;
+}
+
+@media (min-width: 1600px){
+  body {
+    font-size: 20px;
+  }
+
+  .taskTitle {
+    font-size: 1.5rem;
+  }
+
+  .col__header {
+    font-size: 1.6rem;
+  }
+
+  .scrollBox {
+    height: 88vh;
+  }
 }
