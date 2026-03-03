@@ -8,7 +8,7 @@ app.use(cors());
 const CLICKUP_TOKEN = process.env.CLICKUP_TOKEN;
 
 // Seus LIST IDs (dos seus links)
-const TASKS_LIST_ID = "9011438416";
+const TASKS_LIST_ID = "901113131877";
 const DIARY_LIST_ID = "901113131670";
 
 
