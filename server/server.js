@@ -4,31 +4,79 @@ import cors from "cors";
 const app = express();
 app.use(cors());
 
-// ✅ CORRETO: pega do Render pela chave CLICKUP_TOKEN
-const CLICKUP_TOKEN = process.env.CLICKUP_TOKEN;
+//////////////////////////////
+// CONFIG
+//////////////////////////////
 
 // Seus LIST IDs (dos seus links)
 const TASKS_LIST_ID = "901113131877";
 const DIARY_LIST_ID = "901113131670";
 
+// ✅ Filtrar por NOME do status (mais estável que id sc...)
+const TODO_NAMES = [
+  "to do",
+  "todo",
+  "a fazer",
+  "afazer",
+  "pendente",
+  "pendências",
+  "pendencias",
+];
 
-// Seus status IDs (pra filtrar no servidor)
-const TODO_STATUS_ID = "sc901105559393_BJjZ8bHb";
-const INPROGRESS_STATUS_ID = "sc901105559393_KMPJFKlq";
+const INPROGRESS_NAMES = [
+  "in progress",
+  "inprogress",
+  "em andamento",
+  "andamento",
+  "fazendo",
+  "doing",
+];
 
-function assertEnv() {
-  if (!CLICKUP_TOKEN) {
+//////////////////////////////
+// HELPERS
+//////////////////////////////
+
+function getToken() {
+  const token = process.env.CLICKUP_TOKEN;
+  if (!token) {
     const err = new Error("Missing env var CLICKUP_TOKEN");
     err.status = 500;
     throw err;
   }
+  return token;
+}
+
+function safeText(s) {
+  return (s ?? "").toString();
+}
+
+function normalizeStatusName(s) {
+  return safeText(s)
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")                 // remove acentos
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
+}
+
+function getStatusName(task) {
+  // ClickUp geralmente usa task.status.status como nome.
+  return normalizeStatusName(task?.status?.status || task?.status?.name || "");
+}
+
+function isTodo(task) {
+  const n = getStatusName(task);
+  return TODO_NAMES.some(x => n === normalizeStatusName(x));
+}
+
+function isInProgress(task) {
+  const n = getStatusName(task);
+  return INPROGRESS_NAMES.some(x => n === normalizeStatusName(x));
 }
 
 async function clickup(url) {
-  assertEnv();
-
   const res = await fetch(url, {
-    headers: { Authorization: CLICKUP_TOKEN }
+    headers: { Authorization: getToken() },
   });
 
   const text = await res.text().catch(() => "");
@@ -38,23 +86,35 @@ async function clickup(url) {
     throw err;
   }
 
-  return JSON.parse(text);
+  try {
+    return JSON.parse(text);
+  } catch {
+    const err = new Error(`ClickUp respondeu não-JSON: ${text}`);
+    err.status = 502;
+    throw err;
+  }
 }
+
+//////////////////////////////
+// ROUTES
+//////////////////////////////
 
 // Healthcheck
 app.get("/", (_req, res) => res.json({ ok: true }));
 
-// Tarefas
+// Tarefas (TODO + INPROGRESS)
 app.get("/api/tasks", async (_req, res) => {
   try {
-    const url = `https://api.clickup.com/api/v2/list/${TASKS_LIST_ID}/task?include_closed=false&subtasks=true&page=0&limit=100`;
+    const url =
+      `https://api.clickup.com/api/v2/list/${TASKS_LIST_ID}/task` +
+      `?include_closed=false&subtasks=true&page=0&limit=100`;
+
     const data = await clickup(url);
 
-    const tasks = Array.isArray(data.tasks) ? data.tasks : [];
-    const filtered = tasks.filter(t => {
-      const sid = t?.status?.id;
-      return sid === TODO_STATUS_ID || sid === INPROGRESS_STATUS_ID;
-    });
+    const tasks = Array.isArray(data?.tasks) ? data.tasks : [];
+
+    // ✅ filtra por nome do status (não por ID)
+    const filtered = tasks.filter(t => isTodo(t) || isInProgress(t));
 
     res.json({ tasks: filtered });
   } catch (e) {
@@ -62,18 +122,25 @@ app.get("/api/tasks", async (_req, res) => {
   }
 });
 
-// Diário
+// Diário (sem filtro)
 app.get("/api/diary", async (_req, res) => {
   try {
-    const url = `https://api.clickup.com/api/v2/list/${DIARY_LIST_ID}/task?include_closed=false&subtasks=true&page=0&limit=100`;
+    const url =
+      `https://api.clickup.com/api/v2/list/${DIARY_LIST_ID}/task` +
+      `?include_closed=false&subtasks=true&page=0&limit=100`;
+
     const data = await clickup(url);
 
-    const tasks = Array.isArray(data.tasks) ? data.tasks : [];
+    const tasks = Array.isArray(data?.tasks) ? data.tasks : [];
     res.json({ tasks });
   } catch (e) {
     res.status(e.status || 500).json({ error: String(e.message || e) });
   }
 });
+
+//////////////////////////////
+// START
+//////////////////////////////
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log("✅ Server on port", port));

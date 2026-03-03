@@ -1,6 +1,6 @@
 /* script.js (SEM TOKEN)
    Front chama seu backend no Render:
-   - GET {API_BASE}/api/tasks  -> { tasks: [...] }   (já filtradas TODO/INPROGRESS no servidor)
+   - GET {API_BASE}/api/tasks  -> { tasks: [...] }
    - GET {API_BASE}/api/diary  -> { tasks: [...] }
 */
 
@@ -16,9 +16,25 @@ const API_BASE = "https://dashboardclickup-jspu.onrender.com";
 // Atualização automática
 const REFRESH_MS = 2 * 60 * 1000;
 
-// IDs de status (ainda usamos no front para separar as colunas)
-const TODO_STATUS_ID = "sc901105559393_BJjZ8bHb";
-const INPROGRESS_STATUS_ID = "sc901105559393_KMPJFKlq";
+// ✅ NOVO: separe por NOME do status (mais estável que id sc...)
+const TODO_NAMES = [
+  "to do",
+  "todo",
+  "a fazer",
+  "afazer",
+  "pendente",
+  "pendências",
+  "pendencias"
+];
+
+const INPROGRESS_NAMES = [
+  "in progress",
+  "inprogress",
+  "em andamento",
+  "andamento",
+  "fazendo",
+  "doing"
+];
 
 //////////////////////////////
 // HELPERS
@@ -96,6 +112,30 @@ function sortByPriorityAsc(a, b) {
   const pa = Number(a?.priority?.id ?? 999);
   const pb = Number(b?.priority?.id ?? 999);
   return pa - pb;
+}
+
+function normalizeStatusName(s) {
+  return safeText(s)
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")                 // remove acentos
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");            // espaços extras
+}
+
+function getStatusName(task) {
+  // ClickUp costuma usar: task.status.status (nome) e task.status.id (sc...)
+  return normalizeStatusName(task?.status?.status || task?.status?.name || "");
+}
+
+function isTodo(task) {
+  const n = getStatusName(task);
+  return TODO_NAMES.some(x => n === normalizeStatusName(x));
+}
+
+function isInProgress(task) {
+  const n = getStatusName(task);
+  return INPROGRESS_NAMES.some(x => n === normalizeStatusName(x));
 }
 
 //////////////////////////////
@@ -191,7 +231,7 @@ function renderDiaryCard(task) {
 
 function startAutoScrollTV({
   selectors = [],
-  speed = 0.65,        // ✅ mais rápido (0.55~0.90 bom pra TV)
+  speed = 0.65,
   pauseMsAtEnd = 2200,
   pauseMsAtTop = 900
 } = {}) {
@@ -286,16 +326,24 @@ async function loadDashboard() {
   const tasks = Array.isArray(tasksData.tasks) ? tasksData.tasks : [];
   const diaryTasks = Array.isArray(diaryData.tasks) ? diaryData.tasks : [];
 
-  const todo = tasks.filter(t => t?.status?.id === TODO_STATUS_ID);
-  const inprogress = tasks.filter(t => t?.status?.id === INPROGRESS_STATUS_ID);
+  // ✅ DEBUG opcional (se quiser ver no console os status reais)
+  // console.log("Statuses recebidos:", [...new Set(tasks.map(t => `${t?.status?.status} | ${t?.status?.id}`))]);
+
+  // ✅ NOVO: separa por NOME do status
+  const todo = tasks.filter(isTodo);
+  const inprogress = tasks.filter(isInProgress);
 
   setCounts({ todo: todo.length, inprogress: inprogress.length, total: tasks.length });
 
-  if (todoList) todoList.innerHTML =
-    todo.sort(sortByPriorityAsc).map(renderTaskCard).join("") || `<p class="muted">Sem tarefas.</p>`;
+  if (todoList) {
+    todoList.innerHTML =
+      todo.sort(sortByPriorityAsc).map(renderTaskCard).join("") || `<p class="muted">Sem tarefas.</p>`;
+  }
 
-  if (progressList) progressList.innerHTML =
-    inprogress.sort(sortByPriorityAsc).map(renderTaskCard).join("") || `<p class="muted">Sem tarefas.</p>`;
+  if (progressList) {
+    progressList.innerHTML =
+      inprogress.sort(sortByPriorityAsc).map(renderTaskCard).join("") || `<p class="muted">Sem tarefas.</p>`;
+  }
 
   const today = todayString();
   const yesterday = yesterdayString();
@@ -305,8 +353,10 @@ async function loadDashboard() {
     return name.includes(today) || name.includes(yesterday);
   });
 
-  if (diaryList) diaryList.innerHTML =
-    filteredDiary.map(renderDiaryCard).join("") || `<p class="muted">Nenhum diário encontrado pra ${today} ou ${yesterday}.</p>`;
+  if (diaryList) {
+    diaryList.innerHTML =
+      filteredDiary.map(renderDiaryCard).join("") || `<p class="muted">Nenhum diário encontrado pra ${today} ou ${yesterday}.</p>`;
+  }
 
   // ✅ Reset scroll nos containers certos (os que realmente rolam)
   ["#diaryScroll", "#todoScroll", "#progressScroll"].forEach(sel => {
