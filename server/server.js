@@ -14,10 +14,9 @@ const DIARY_LIST_ID = "901113131670";
 
 // ✅ Filtrar por NOME do status (mais estável que id sc...)
 const TODO_NAMES = [
-  "to do",
-  "todo",
   "a fazer",
-  "afazer",
+  "diario",
+  "mensal",
   "pendente",
   "pendências",
   "pendencias",
@@ -107,16 +106,26 @@ app.get("/api/tasks", async (_req, res) => {
   try {
     const url =
       `https://api.clickup.com/api/v2/list/${TASKS_LIST_ID}/task` +
-      `?include_closed=false&subtasks=true&page=0&limit=100`;
+      `?include_closed=true&subtasks=true&page=0&limit=100`; // 👈 true pra testar
 
     const data = await clickup(url);
-
     const tasks = Array.isArray(data?.tasks) ? data.tasks : [];
 
-    // ✅ filtra por nome do status (não por ID)
+    // Debug: quantas por status
+    const counts = {};
+    for (const t of tasks) {
+      const s = (t?.status?.status || t?.status?.name || "SEM_STATUS").toString();
+      counts[s] = (counts[s] || 0) + 1;
+    }
+
     const filtered = tasks.filter(t => isTodo(t) || isInProgress(t));
 
-    res.json({ tasks: filtered });
+    res.json({
+      total: tasks.length,
+      porStatus: counts,
+      filtradas: filtered.length,
+      tasks: filtered,
+    });
   } catch (e) {
     res.status(e.status || 500).json({ error: String(e.message || e) });
   }
