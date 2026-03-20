@@ -49,14 +49,18 @@ function formatDDMMYYYY(date) {
   return `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}/${d.getFullYear()}`;
 }
 
-function yesterdayString() {
+function previousRelevantDiaryString() {
   const d = new Date();
-  d.setDate(d.getDate() - 1);
-  return formatDDMMYYYY(d);
-}
+  const dayOfWeek = d.getDay(); // 0=domingo, 1=segunda, ..., 6=sábado
 
-function todayString() {
-  return formatDDMMYYYY(new Date());
+  // Segunda-feira -> volta para sexta
+  if (dayOfWeek === 1) {
+    d.setDate(d.getDate() - 3);
+  } else {
+    d.setDate(d.getDate() - 1);
+  }
+
+  return formatDDMMYYYY(d);
 }
 
 function safeText(s) {
@@ -345,17 +349,16 @@ async function loadDashboard() {
       inprogress.sort(sortByPriorityAsc).map(renderTaskCard).join("") || `<p class="muted">Sem tarefas.</p>`;
   }
 
-  const today = todayString();
-  const yesterday = yesterdayString();
+  const previousDiaryDate = previousRelevantDiaryString();
 
   const filteredDiary = diaryTasks.filter(t => {
     const name = safeText(t.name);
-    return name.includes(today) || name.includes(yesterday);
+    return name.includes(previousDiaryDate);
   });
 
   if (diaryList) {
     diaryList.innerHTML =
-      filteredDiary.map(renderDiaryCard).join("") || `<p class="muted">Nenhum diário encontrado pra ${today} ou ${yesterday}.</p>`;
+      filteredDiary.map(renderDiaryCard).join("") || `<p class="muted">Nenhum diário encontrado para ${previousDiaryDate}.</p>`;
   }
 
   // ✅ Reset scroll nos containers certos (os que realmente rolam)
