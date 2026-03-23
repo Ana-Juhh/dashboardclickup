@@ -53,7 +53,7 @@ function previousRelevantDiaryString() {
   const d = new Date();
   const dayOfWeek = d.getDay(); // 0=domingo, 1=segunda, ..., 6=sábado
 
-  // Segunda-feira -> volta para sexta
+  // Segunda-feira -> mostrar sexta-feira
   if (dayOfWeek === 1) {
     d.setDate(d.getDate() - 3);
   } else {
@@ -351,15 +351,16 @@ async function loadDashboard() {
 
   const previousDiaryDate = previousRelevantDiaryString();
 
-  const filteredDiary = diaryTasks.filter(t => {
-    const name = safeText(t.name);
-    return name.includes(previousDiaryDate);
-  });
+const filteredDiary = diaryTasks.filter(t => {
+  const name = safeText(t.name);
+  return name.includes(previousDiaryDate);
+});
 
-  if (diaryList) {
-    diaryList.innerHTML =
-      filteredDiary.map(renderDiaryCard).join("") || `<p class="muted">Nenhum diário encontrado para ${previousDiaryDate}.</p>`;
-  }
+if (diaryList) {
+  diaryList.innerHTML =
+    filteredDiary.map(renderDiaryCard).join("") ||
+    `<p class="muted">Nenhum diário encontrado para ${previousDiaryDate}.</p>`;
+}
 
   // ✅ Reset scroll nos containers certos (os que realmente rolam)
   ["#diaryScroll", "#todoScroll", "#progressScroll"].forEach(sel => {
